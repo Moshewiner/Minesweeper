@@ -3,18 +3,18 @@ import MineTile from './mine-tile/mine-tile.component';
 import NumberTile from './number-tile/number-tile.component';
 import Tile, { TileStatus, ClickType } from './tile.component';
 
-interface Mine {
+interface MineTileType {
     type: "Mine",
 }
 
 //TODO: find better name
 interface NumberTileType {
-    type: "Number",
+    type: "NumberTileType",
     value: number;
 }
 
 
-function TileContainer(props: Mine | NumberTileType) {
+function TileContainer(props: MineTileType | NumberTileType) {
     let [status, setStatus]: [TileStatus, any] = useState(TileStatus.Hidden);
     return (
         <Tile
