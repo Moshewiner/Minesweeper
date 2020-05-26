@@ -1,32 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './board.component.scss';
-import TileContainer from '../tile/tile.container';
+import TileContainer from '../tiles/tile.container';
 
 const MINE = -1;
-const REGULAR = 0;
+const NUMBER = 0;
 
 
-function Board(props: { colsNum: number, rowsNum: number, mineCount: number }) {
+function Board(props: { colsCount: number, rowsCount: number, mineCount: number }) {
     console.clear();
-    let [board, setBoard]: [Array<number>, any] = useState(createBoard(props.colsNum, props.rowsNum, props.mineCount));
+    let [board, setBoard]: [Array<number>, any] = useState([]);
+    let [rows, setRows]: [any[][], any] = useState([]);
+    
+    useEffect(() => {
+        setBoard(createBoard(props.colsCount, props.rowsCount, props.mineCount));
+        setRows(createRows(board, props.colsCount, props.rowsCount));
+    }, []);
 
-    let rows = [];
-    for (let row = 0; row < props.rowsNum; row++) {
-        const rowItems = [];
-        for (let cell = 0; cell < props.colsNum; cell++) {
-            const boardItem = board[twoDimentionalIndexToOne(row, cell, props.colsNum)];
-
-            if (boardItem === MINE) {
-                rowItems.push(<TileContainer type="Bomb"></TileContainer>);
-            }
-            else {
-                rowItems.push(<TileContainer type="Number" bombsCount={boardItem}></TileContainer>);
-            }
-
-        }
-        rows.push(<div className='row'>{rowItems}</div>)
-    }
-
+    
     return (
         <div className="board">
             {
@@ -36,8 +26,29 @@ function Board(props: { colsNum: number, rowsNum: number, mineCount: number }) {
     );
 }
 
+function createRows(board: number[], colsCount: number, rowsCount: number): any[] {
+    let rows = [];
+    for (let row = 0; row < rowsCount; row++) {
+        const rowItems = [];
+        for (let cell = 0; cell < colsCount; cell++) {
+            const boardItem = board[twoDimentionalIndexToOne(row, cell, colsCount)];
+
+            if (boardItem === MINE) {
+                rowItems.push(<TileContainer type="Bomb"></TileContainer>);
+            }
+            else {
+                rowItems.push(<TileContainer type="Number" value={boardItem}></TileContainer>);
+            }
+
+        }
+        rows.push(<div className='row'>{rowItems}</div>)
+    }
+
+    return rows;
+}
+
 function createBoard(colsNum: number, rowsNum: number, minesCount: number): number[] {
-    let oneDimentionalBoard = new Array(rowsNum * colsNum).fill(REGULAR);
+    let oneDimentionalBoard = new Array(rowsNum * colsNum).fill(NUMBER);
     let referenceIndexBoard = new Array(rowsNum * colsNum).fill(6).map((_, i) => i);
 
     let mineIndices = [];
