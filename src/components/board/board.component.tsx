@@ -22,7 +22,7 @@ function createRows(board: number[], colsCount: number, rowsCount: number): any[
         for (let cell = 0; cell < colsCount; cell++) {
             const boardItem = board[twoDimentionalIndexToOne(row, cell, colsCount)];
             if (boardItem === MINE) {
-                rowItems.push(<TileContainer type="Bomb" key={cell}></TileContainer>);
+                rowItems.push(<TileContainer type="Mine" key={cell}></TileContainer>);
             }
             else {
                 rowItems.push(<TileContainer type="Number" value={boardItem} key={cell}></TileContainer>);

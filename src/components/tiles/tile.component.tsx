@@ -1,5 +1,6 @@
 import React from 'react';
-import img from './../../../assets/icons8-flag-filled-100.png';
+import img from './../../assets/icons8-flag-filled-100.png';
+import './tile.component.scss';
 
 export enum TileStatus {
     Hidden = "Hidden",
