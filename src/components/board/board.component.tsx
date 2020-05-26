@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './board.component.scss';
 import TileContainer from '../tiles/tile.container';
 
@@ -7,22 +7,11 @@ const NUMBER = 0;
 
 
 function Board(props: { colsCount: number, rowsCount: number, mineCount: number }) {
-    console.clear();
-    let [board, setBoard]: [Array<number>, any] = useState([]);
-    let [rows, setRows]: [any[][], any] = useState([]);
-    
-    useEffect(() => {
-        setBoard(createBoard(props.colsCount, props.rowsCount, props.mineCount));
-        setRows(createRows(board, props.colsCount, props.rowsCount));
-    }, []);
-
+    let [board, setBoard]: [Array<number>, any] = useState(createBoard(props.colsCount, props.rowsCount, props.mineCount));
+    let [rows, setRows]: [any[][], any] = useState(createRows(board, props.colsCount, props.rowsCount));
     
     return (
-        <div className="board">
-            {
-                rows
-            }
-        </div>
+        <div className="board">{rows}</div>
     );
 }
 
@@ -32,16 +21,15 @@ function createRows(board: number[], colsCount: number, rowsCount: number): any[
         const rowItems = [];
         for (let cell = 0; cell < colsCount; cell++) {
             const boardItem = board[twoDimentionalIndexToOne(row, cell, colsCount)];
-
             if (boardItem === MINE) {
-                rowItems.push(<TileContainer type="Bomb"></TileContainer>);
+                rowItems.push(<TileContainer type="Bomb" key={cell}></TileContainer>);
             }
             else {
-                rowItems.push(<TileContainer type="Number" value={boardItem}></TileContainer>);
+                rowItems.push(<TileContainer type="Number" value={boardItem} key={cell}></TileContainer>);
             }
 
         }
-        rows.push(<div className='row'>{rowItems}</div>)
+        rows.push(<div className='row' key={row}>{rowItems}</div>)
     }
 
     return rows;

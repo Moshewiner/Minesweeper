@@ -15,16 +15,18 @@ interface Number {
 
 
 function TileContainer(props: Bomb | Number) {
-
     let [status, setStatus]: [TileStatus, any] = useState(TileStatus.Hidden);
-
     return (
         <Tile
             status={status}
             onClick={
-                (clickType: ClickType, tileType: TileStatus) => {
-                    console.log(ClickType[clickType], tileType);
-                    setStatus(toggleFlag(status));
+                (clickType: ClickType, tileStatus: TileStatus) => {
+                    if(clickType === ClickType.Primary) {
+                        setStatus(toggleTile(tileStatus));
+                    }
+                    else if(clickType === ClickType.Secondary) {
+                        setStatus(toggleFlag(tileStatus));
+                    }
                 }
             }
         >
@@ -36,15 +38,17 @@ function TileContainer(props: Bomb | Number) {
 }
 
 function toggleFlag(currentState: TileStatus): TileStatus {
+    console.log("toggle flag@")
     const options = {
         [TileStatus.Flag]: TileStatus.Hidden,
-        [TileStatus.Hidden]: TileStatus.Revealed,
+        [TileStatus.Hidden]: TileStatus.Flag,
     } as { [key in TileStatus]: TileStatus }
 
     return options[currentState] || TileStatus.Hidden;
 }
 
 function toggleTile(currentState: TileStatus): TileStatus {
+    console.log("Toggle tile!")
     const options = {
         [TileStatus.Revealed]: TileStatus.Hidden,
         [TileStatus.Hidden]: TileStatus.Revealed,

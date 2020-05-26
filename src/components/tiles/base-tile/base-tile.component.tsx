@@ -16,7 +16,7 @@ type TileProps = React.PropsWithChildren<{ status: TileStatus, onClick: (clickTy
 
 const Tile: React.FunctionComponent<TileProps> = (props: TileProps) => {
     return (
-        <div className={`tile ${props.status}`}
+        <div className='tile'
             onMouseDownCapture={
                 (event) => {
                     props.onClick(event.shiftKey ? ClickType.Secondary: ClickType.Primary, props.status)
