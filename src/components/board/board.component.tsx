@@ -91,7 +91,7 @@ function Board(props: {
 
 	useEffect(() => {
 		setBoard(createBoard(props.colsCount, props.rowsCount, props.mineCount));
-	}, [props.colsCount, props.rowsCount, props.mineCount]);
+	}, [props.colsCount, props.rowsCount, props.mineCount, props.id]);
 
 	useEffect(() => {
 		checkWin(
