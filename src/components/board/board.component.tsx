@@ -8,9 +8,17 @@ import { DEFAULT_MINE_TILE, Tile, TileType } from '../../services/board/board.ty
 
 
 function Board(props: { colsCount: number, rowsCount: number, mineCount: number }) {
-    let [board, setBoard]: [Array<Tile>, (board: Tile[]) => void] = useState(createBoard(props.colsCount, props.rowsCount, props.mineCount));
-    const rows = createRows(board, setBoard, props.colsCount, props.rowsCount);
+    let [board, setBoard]= useState<Tile[]>([]);
+    let [rows, setRows] = useState<any[]>([]);
 
+    useEffect(() => {
+        setBoard(createBoard(props.colsCount, props.rowsCount, props.mineCount));
+    }, [props.colsCount, props.rowsCount, props.mineCount]);
+
+    useEffect(()=>{
+        board.length > 0 && setRows(() => createRows(board, setBoard, props.colsCount, props.rowsCount));
+    }, [board]);
+    
     return (
         <div className="board">{rows}</div>
     );
