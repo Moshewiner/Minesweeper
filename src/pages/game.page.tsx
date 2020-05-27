@@ -1,8 +1,18 @@
 import Board from '../components/board/board.component';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './game.page.scss';
 
-export const GameContext = React.createContext<{ flagCount: number, setFlagCount: (count: number) => void, isGameRunning: boolean }>({flagCount: 0, setFlagCount: () => {}, isGameRunning: false});
+export const GameContext = React.createContext<{
+  minesCount: number;
+  remainingFlagsCount: number;
+  setFlagCount: (count: number) => void;
+  isGameRunning: boolean;
+}>({
+  remainingFlagsCount: 0,
+  setFlagCount: () => {},
+  isGameRunning: false,
+  minesCount: 0,
+});
 
 function Game() {
   const [colsCount, setColsCount] = useState(6);
@@ -14,10 +24,12 @@ function Game() {
     minesCount,
   });
   const [isGameRunning, setIsGameRunning] = useState(true);
-  const [flagCount, setFlagCount] = useState(minesCount);
+  const [remainingFlagsCount, setFlagCount] = useState(minesCount);
 
   return (
-    <GameContext.Provider value={{ flagCount, isGameRunning, setFlagCount }}>
+    <GameContext.Provider
+      value={{ remainingFlagsCount, isGameRunning, setFlagCount, minesCount }}
+    >
       <input
         value={colsCount}
         type="number"
@@ -34,19 +46,19 @@ function Game() {
         value={minesCount}
         type="number"
         placeholder="Number of mines"
-        onChange={
-          (e) => {
-            setMinesCount(+e.target.value);
-            setFlagCount(+e.target.value);
-          }
-        }
+        onChange={(e) => {
+          setMinesCount(+e.target.value);
+          setFlagCount(+e.target.value);
+        }}
       />
       <button
         onClick={() => setBoardProps({ colsCount, rowsCount, minesCount })}
       >
         New Game
       </button>
-      <div><span>Remaining Flags: {flagCount}</span></div>
+      <div>
+        <span>Remaining Flags: {remainingFlagsCount}</span>
+      </div>
       <Board
         colsCount={boardProps.colsCount}
         rowsCount={boardProps.rowsCount}
