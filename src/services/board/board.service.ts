@@ -1,26 +1,10 @@
-import {
-  oneDimentionalIndexToTwo,
-  twoDimentionalIndexToOne,
-} from '../array-utils/array-utils.service';
-import {
-  DEFAULT_NUMBER_TILE,
-  DEFAULT_MINE_TILE,
-  TileType,
-  Tile,
-} from './board.types';
+import { oneDimentionalIndexToTwo, twoDimentionalIndexToOne } from '../array-utils/array-utils.service';
+import { DEFAULT_NUMBER_TILE, DEFAULT_MINE_TILE, TileType, Tile } from './board.types';
 import { TileStatus } from '../../components/tiles/tile.component';
 
-export function createBoard(
-  colsCount: number,
-  rowsCount: number,
-  minesCount: number
-): Tile[] {
-  let oneDimentionalBoard = new Array(rowsCount * colsCount)
-    .fill(6)
-    .map(() => ({ ...DEFAULT_NUMBER_TILE }));
-  let referenceIndexBoard = new Array(rowsCount * colsCount)
-    .fill(6)
-    .map((_, i) => i);
+export function createBoard(colsCount: number, rowsCount: number, minesCount: number): Tile[] {
+  let oneDimentionalBoard = new Array(rowsCount * colsCount).fill(6).map(() => ({ ...DEFAULT_NUMBER_TILE }));
+  let referenceIndexBoard = new Array(rowsCount * colsCount).fill(6).map((_, i) => i);
 
   let mineIndices = [];
 
@@ -29,8 +13,7 @@ export function createBoard(
 
     mineIndices.push(referenceIndexBoard[index]);
     oneDimentionalBoard[referenceIndexBoard[index]] = { ...DEFAULT_MINE_TILE };
-    referenceIndexBoard[index] =
-      referenceIndexBoard[referenceIndexBoard.length - 1];
+    referenceIndexBoard[index] = referenceIndexBoard[referenceIndexBoard.length - 1];
 
     referenceIndexBoard.pop();
   }
@@ -38,12 +21,7 @@ export function createBoard(
   return calcNumbers(mineIndices, oneDimentionalBoard, colsCount, rowsCount);
 }
 
-function calcNumbers(
-  mineIndices: number[],
-  board: Tile[],
-  colsCount: number,
-  rowsCount: number
-): Tile[] {
+function calcNumbers(mineIndices: number[], board: Tile[], colsCount: number, rowsCount: number): Tile[] {
   mineIndices.forEach((mine) => {
     const neighbours = findNeighbours(mine, colsCount, rowsCount);
     neighbours.forEach((neighbour) => {
@@ -56,11 +34,7 @@ function calcNumbers(
   return board;
 }
 
-function findNeighbours(
-  index: number,
-  colsCount: number,
-  rowsCount: number
-): number[] {
+function findNeighbours(index: number, colsCount: number, rowsCount: number): number[] {
   const [i, j] = oneDimentionalIndexToTwo(index, colsCount);
 
   let neighbours = [];
@@ -77,73 +51,65 @@ function findNeighbours(
 }
 
 export function revealEmptyTiles(
-	board: Tile[],
-	position: number,
-	colsCount: number,
-	rowsCount: number,
-	revealedTilesCount: number,
-	setRevealedTilesCount: (count: number) => void
+  board: Tile[],
+  position: number,
+  colsCount: number,
+  rowsCount: number,
+  revealedTilesCount: number,
+  setRevealedTilesCount: (count: number) => void
 ): void {
-	let arr: number[] = [position];
-	let countOfRevealed = 1;
+  let arr: number[] = [position];
+  let countOfRevealed = 1;
 
-	while (arr.length > 0) {
-		let currentPosition: number = arr.pop() || 0;
-		const neighbours: number[] = findNeighbours(
-			currentPosition,
-			colsCount,
-			rowsCount
-		);
-		const hiddenNeighbours = neighbours.filter((neighbour) => board[neighbour].status === TileStatus.Hidden);
+  while (arr.length > 0) {
+    let currentPosition: number = arr.pop() || 0;
+    const neighbours: number[] = findNeighbours(currentPosition, colsCount, rowsCount);
+    const hiddenNeighbours = neighbours.filter((neighbour) => board[neighbour].status === TileStatus.Hidden);
 
-		countOfRevealed += hiddenNeighbours.length;
+    countOfRevealed += hiddenNeighbours.length;
 
-		hiddenNeighbours.forEach(neighbourIndex => {
-			board[neighbourIndex].status = TileStatus.Revealed;
-		});
+    hiddenNeighbours.forEach((neighbourIndex) => {
+      board[neighbourIndex].status = TileStatus.Revealed;
+    });
 
-		arr.push(
-			...hiddenNeighbours
-				.filter((neighbourIndex) => board[neighbourIndex].value === 0)
-		);
-	}
-	countOfRevealed > 1 && setRevealedTilesCount(revealedTilesCount + countOfRevealed);
+    arr.push(...hiddenNeighbours.filter((neighbourIndex) => board[neighbourIndex].value === 0));
+  }
+  countOfRevealed > 1 && setRevealedTilesCount(revealedTilesCount + countOfRevealed);
 }
 
 export function toggleFlag(
-	currentStatus: TileStatus,
-	flagCount: number,
-	setFlagCount: (count: number) => void
+  currentStatus: TileStatus,
+  flagCount: number,
+  setFlagCount: (count: number) => void
 ): TileStatus {
-	if (currentStatus === TileStatus.Flag) {
-		setFlagCount(flagCount + 1);
-		return TileStatus.Hidden;
-	}
-	if (currentStatus === TileStatus.Hidden) {
-		if (flagCount > 0) {
-			setFlagCount(flagCount - 1);
-			return TileStatus.Flag;
-		}
-		else {
-			alert("You don't have any more flags to use");
-		}
-	}
+  if (currentStatus === TileStatus.Flag) {
+    setFlagCount(flagCount + 1);
+    return TileStatus.Hidden;
+  }
+  if (currentStatus === TileStatus.Hidden) {
+    if (flagCount > 0) {
+      setFlagCount(flagCount - 1);
+      return TileStatus.Flag;
+    } else {
+      alert("You don't have any more flags to use");
+    }
+  }
 
-	return currentStatus;
+  return currentStatus;
 }
 
 export function revealTile(
-	currentState: TileStatus,
-	numberOfRevealedTiles: number,
-	setNumberOfRevealedTiles: (count: number) => void
+  currentState: TileStatus,
+  numberOfRevealedTiles: number,
+  setNumberOfRevealedTiles: (count: number) => void
 ): TileStatus {
-	const options = {
-		[TileStatus.Hidden]: TileStatus.Revealed,
-	} as { [key in TileStatus]: TileStatus };
+  const options = {
+    [TileStatus.Hidden]: TileStatus.Revealed,
+  } as { [key in TileStatus]: TileStatus };
 
-	if (options[currentState] && options[currentState] !== currentState) {
-		setNumberOfRevealedTiles(numberOfRevealedTiles + 1);
-		return options[currentState];
-	}
-	return currentState;
+  if (options[currentState] && options[currentState] !== currentState) {
+    setNumberOfRevealedTiles(numberOfRevealedTiles + 1);
+    return options[currentState];
+  }
+  return currentState;
 }

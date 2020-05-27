@@ -25,10 +25,7 @@ const Tile: React.FunctionComponent<TileProps> = (props: TileProps) => {
     <div
       className={`tile ${props.position}`}
       onMouseDownCapture={(event) => {
-        props.onClick(
-          event.shiftKey ? ClickType.Secondary : ClickType.Primary,
-          props.status
-        );
+        props.onClick(event.shiftKey ? ClickType.Secondary : ClickType.Primary, props.status);
         event.stopPropagation();
       }}
       style={props.style}

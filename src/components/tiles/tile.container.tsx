@@ -13,11 +13,7 @@ type NumberTileType = {
 };
 
 type TileContainerPropsType = (MineTileType | NumberTileType) & {
-  onClick: (
-    clickType: ClickType,
-    tileStatus: TileStatus,
-    position: number
-  ) => void;
+  onClick: (clickType: ClickType, tileStatus: TileStatus, position: number) => void;
   status: TileStatus;
   position: number;
   style: object;
@@ -29,15 +25,9 @@ function TileContainer(props: TileContainerPropsType) {
       style={props.style}
       position={props.position}
       status={props.status}
-      onClick={(clickType, tileStatus) =>
-        props.onClick(clickType, tileStatus, props.position)
-      }
+      onClick={(clickType, tileStatus) => props.onClick(clickType, tileStatus, props.position)}
     >
-      {props.type === 'Mine' ? (
-        <MineTile />
-      ) : (
-        <NumberTile value={(props as NumberTileType).value} />
-      )}
+      {props.type === 'Mine' ? <MineTile /> : <NumberTile value={(props as NumberTileType).value} />}
     </Tile>
   );
 }
