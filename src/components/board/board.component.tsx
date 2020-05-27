@@ -166,6 +166,9 @@ function toggleFlag(currentState: TileStatus, flagCount: number, setFlagCount: (
 		setFlagCount(flagCount - 1);
 		return options[currentState] || currentState;
 	}
+	else {
+		alert("You don't have any more flags to use");
+	}
 	return currentState;
 }
 
