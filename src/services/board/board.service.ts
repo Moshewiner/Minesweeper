@@ -33,7 +33,7 @@ function calcNumbers(mineIndices: number[], board: Tile[], colsCount: number, ro
     return board;
 }
 
-export function findNeighbours(index: number, colsCount: number, rowsCount: number) {
+export function findNeighbours(index: number, colsCount: number, rowsCount: number): number[] {
     const [i, j] = oneDimentionalIndexToTwo(index, colsCount);
     
     let neighbours = [];

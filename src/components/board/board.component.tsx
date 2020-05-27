@@ -8,17 +8,17 @@ import { DEFAULT_MINE_TILE, Tile, TileType } from '../../services/board/board.ty
 
 
 function Board(props: { colsCount: number, rowsCount: number, mineCount: number }) {
-    let [board, setBoard]= useState<Tile[]>([]);
+    let [board, setBoard] = useState<Tile[]>([]);
     let [rows, setRows] = useState<any[]>([]);
 
     useEffect(() => {
         setBoard(createBoard(props.colsCount, props.rowsCount, props.mineCount));
     }, [props.colsCount, props.rowsCount, props.mineCount]);
 
-    useEffect(()=>{
+    useEffect(() => {
         board.length > 0 && setRows(() => createRows(board, setBoard, props.colsCount, props.rowsCount));
     }, [board]);
-    
+
     return (
         <div className="board">{rows}</div>
     );
@@ -92,16 +92,25 @@ function createRows(board: Tile[], setBoard: (board: Tile[]) => void, colsCount:
 }
 
 function revealEmptyTiles(board: Tile[], position: number, colsCount: number, rowsCount: number): void {
-    const neighbours = findNeighbours(position, colsCount, rowsCount);
-    neighbours
-    .filter(neighbour => board[neighbour].status === TileStatus.Hidden)
-    .forEach(neighbour => {
-        board[neighbour].status = TileStatus.Revealed;
-        if (board[neighbour].value === 0) {
-            revealEmptyTiles(board, neighbour, colsCount, rowsCount);
-        }
-    });
+
+    let arr: number[] = [position];
+
+    while (arr.length > 0) {
+        let currentPosition: number = arr.pop() || 0;
+        const neighbours: number[] = findNeighbours(currentPosition, colsCount, rowsCount);
+
+        arr.push(
+            ...neighbours.filter(neighbour => board[neighbour].status === TileStatus.Hidden)
+                .map((neighbourIndex: number) => {
+                    board[neighbourIndex].status = TileStatus.Revealed;
+                    return neighbourIndex;
+                })
+                .filter(neighbourIndex => board[neighbourIndex].value === 0)
+        );
+    }
+
 }
+
 
 function toggleFlag(currentState: TileStatus): TileStatus {
     const options = {
