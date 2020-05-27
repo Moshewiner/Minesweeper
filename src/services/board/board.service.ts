@@ -8,6 +8,7 @@ import {
   TileType,
   Tile,
 } from './board.types';
+import { TileStatus } from '../../components/tiles/tile.component';
 
 export function createBoard(
   colsCount: number,
@@ -55,7 +56,7 @@ function calcNumbers(
   return board;
 }
 
-export function findNeighbours(
+function findNeighbours(
   index: number,
   colsCount: number,
   rowsCount: number
@@ -73,4 +74,76 @@ export function findNeighbours(
   }
 
   return neighbours;
+}
+
+export function revealEmptyTiles(
+	board: Tile[],
+	position: number,
+	colsCount: number,
+	rowsCount: number,
+	revealedTilesCount: number,
+	setRevealedTilesCount: (count: number) => void
+): void {
+	let arr: number[] = [position];
+	let countOfRevealed = 1;
+
+	while (arr.length > 0) {
+		let currentPosition: number = arr.pop() || 0;
+		const neighbours: number[] = findNeighbours(
+			currentPosition,
+			colsCount,
+			rowsCount
+		);
+		const hiddenNeighbours = neighbours.filter((neighbour) => board[neighbour].status === TileStatus.Hidden);
+
+		countOfRevealed += hiddenNeighbours.length;
+
+		hiddenNeighbours.forEach(neighbourIndex => {
+			board[neighbourIndex].status = TileStatus.Revealed;
+		});
+
+		arr.push(
+			...hiddenNeighbours
+				.filter((neighbourIndex) => board[neighbourIndex].value === 0)
+		);
+	}
+	countOfRevealed > 1 && setRevealedTilesCount(revealedTilesCount + countOfRevealed);
+}
+
+export function toggleFlag(
+	currentStatus: TileStatus,
+	flagCount: number,
+	setFlagCount: (count: number) => void
+): TileStatus {
+	if (currentStatus === TileStatus.Flag) {
+		setFlagCount(flagCount + 1);
+		return TileStatus.Hidden;
+	}
+	if (currentStatus === TileStatus.Hidden) {
+		if (flagCount > 0) {
+			setFlagCount(flagCount - 1);
+			return TileStatus.Flag;
+		}
+		else {
+			alert("You don't have any more flags to use");
+		}
+	}
+
+	return currentStatus;
+}
+
+export function revealTile(
+	currentState: TileStatus,
+	numberOfRevealedTiles: number,
+	setNumberOfRevealedTiles: (count: number) => void
+): TileStatus {
+	const options = {
+		[TileStatus.Hidden]: TileStatus.Revealed,
+	} as { [key in TileStatus]: TileStatus };
+
+	if (options[currentState] && options[currentState] !== currentState) {
+		setNumberOfRevealedTiles(numberOfRevealedTiles + 1);
+		return options[currentState];
+	}
+	return currentState;
 }
