@@ -28,7 +28,7 @@ function Board(props: {
 	const onMineClick = useCallback(
 		(clickType: ClickType, tileStatus: TileStatus, position: number) => {
 			if (board.length !== props.colsCount * props.rowsCount) {
-			} else if (clickType === ClickType.Primary) {
+			} else if (clickType === ClickType.Primary && tileStatus === TileStatus.Hidden) {
 				board.length &&
 					board.forEach((tile: Tile) => {
 						if (tile.type === TileType.Mine) {
