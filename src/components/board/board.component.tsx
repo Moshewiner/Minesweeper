@@ -1,95 +1,95 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './board.component.scss';
 import TileContainer from '../tiles/tile.container';
 import { twoDimentionalIndexToOne } from '../../services/array-utils/array-utils.service';
 import { createBoard, findNeighbours } from '../../services/board/board.service';
 import { TileStatus, ClickType } from '../tiles/tile.component';
 import { DEFAULT_MINE_TILE, Tile, TileType } from '../../services/board/board.types';
+import { FixedSizeGrid as Grid } from 'react-window';
 
 
 function Board(props: { colsCount: number, rowsCount: number, mineCount: number }) {
     let [board, setBoard] = useState<Tile[]>([]);
-    let [rows, setRows] = useState<any[]>([]);
+    // let [rows, setRows] = useState<any[]>([]);
 
-    useEffect(() => {
-        setBoard(createBoard(props.colsCount, props.rowsCount, props.mineCount));
-    }, [props.colsCount, props.rowsCount, props.mineCount]);
-
-    useEffect(() => {
-        board.length > 0 && setRows(() => createRows(board, setBoard, props.colsCount, props.rowsCount));
+    const onMineClick = useCallback((clickType: ClickType, tileStatus: TileStatus, position: number) => {
+        if (board.length !== props.colsCount * props.rowsCount) {}
+        else if (clickType === ClickType.Primary) {
+            board.length && board.forEach((tile: Tile) => {
+                if (tile.type === TileType.Mine) {
+                    tile.status = TileStatus.Revealed;
+                }
+            });
+            setTimeout(() => alert("You have lost!"), 0);
+        }
+        else if (clickType === ClickType.Secondary) {
+            board[position].status = toggleFlag(tileStatus);
+        }
+        setBoard([...board]);
     }, [board]);
 
-    return (
-        <div className="board">{rows}</div>
-    );
-}
+    const onNumberTileClick = useCallback((clickType: ClickType, tileStatus: TileStatus, position: number) => {
+        if (board.length !== props.colsCount * props.rowsCount) {}
+        else if (clickType === ClickType.Primary) {
+            const n = revealTile(tileStatus);
+            board[position].status = n;
 
-
-function createRows(board: Tile[], setBoard: (board: Tile[]) => void, colsCount: number, rowsCount: number): any[] {
-    let rows = [];
-    for (let row = 0; row < rowsCount; row++) {
-        const rowItems = [];
-        for (let cell = 0; cell < colsCount; cell++) {
-            const position = twoDimentionalIndexToOne(row, cell, colsCount);
-            const boardItem = board[position];
-            if (boardItem.value === DEFAULT_MINE_TILE.value) {
-                rowItems.push(
-                    <TileContainer
-                        onClick={
-                            async (clickType: ClickType, tileStatus: TileStatus, position: number) => {
-                                if (clickType === ClickType.Primary) {
-                                    board.length && board.forEach((tile: Tile) => {
-                                        if (tile.type === TileType.Mine) {
-                                            tile.status = TileStatus.Revealed;
-                                        }
-                                    });
-                                    setTimeout(() => alert("You have lost!"), 0);
-                                }
-                                else if (clickType === ClickType.Secondary) {
-                                    board[position].status = toggleFlag(board[position].status);
-                                }
-                                await setBoard([...board]);
-                            }
-                        }
-                        type="Mine"
-                        position={position}
-                        key={cell}
-                        status={boardItem.status} />
-                );
-            }
-            else {
-                rowItems.push(<TileContainer
-                    onClick={
-                        async (clickType: ClickType, tileStatus: TileStatus, position: number) => {
-                            if (clickType === ClickType.Primary) {
-                                const n = revealTile(board[position].status);;
-                                board[position].status = n;
-
-                                if (board[position].value === 0) {
-                                    revealEmptyTiles(board, position, colsCount, rowsCount);
-                                }
-
-                            }
-                            else if (clickType === ClickType.Secondary) {
-                                board[position].status = toggleFlag(board[position].status);
-                            }
-                            await setBoard([...board]);
-                        }
-                    }
-                    type="NumberTileType"
-                    value={boardItem.value}
-                    position={position}
-                    key={cell}
-                    status={boardItem.status} />
-                );
+            if (board[position].value === 0) {
+                revealEmptyTiles(board, position, props.colsCount, props.rowsCount);
             }
 
         }
-        rows.push(<div className='row' key={row}>{rowItems}</div>)
-    }
+        else if (clickType === ClickType.Secondary) {
+            board[position].status = toggleFlag(board[position].status);
+        }
+        setBoard([...board]);
+    }, [board, props.colsCount, props.rowsCount]);
 
-    return rows;
+    // useEffect(() => {
+    //     board.length > 0 && board.length === props.colsCount * props.rowsCount && setRows(() => createRows(board, props.colsCount, props.rowsCount, onMineClick, onNumberTileClick));
+    // }, [board, props.colsCount, props.rowsCount, onMineClick, onNumberTileClick]);
+
+    useEffect(() => {
+        setBoard(createBoard(props.colsCount, props.rowsCount, props.mineCount));
+    }, [props.colsCount, props.rowsCount, props.mineCount])
+
+
+    return (
+        board.length > 0 ? <Grid columnCount={props.colsCount}
+            rowCount={props.rowsCount}
+            columnWidth={50}
+            width={500}
+            height={500}
+            rowHeight={50}
+        >
+            {({ columnIndex, rowIndex, style }) => {
+                return createCell(style, twoDimentionalIndexToOne(columnIndex, rowIndex, props.colsCount), board, onMineClick, onNumberTileClick);
+            }}
+        </Grid> : null
+    );
 }
+
+function createCell(style: object, position: number, board: Tile[], onMineClick: (clickType: ClickType, tileStatus: TileStatus, position: number) => void, onNumberTileClick: (clickType: ClickType, tileStatus: TileStatus, position: number) => void) {
+    const boardItem = board[position];
+    if (!boardItem) return null;
+
+    const isMine = boardItem.value === DEFAULT_MINE_TILE.value;
+    let valueProp: any = {};
+    if (!isMine) {
+        valueProp.value = boardItem.value;
+    }
+    return (<TileContainer
+        onClick={
+            isMine ? onMineClick : onNumberTileClick
+        }
+        type={isMine ? "Mine" : "NumberTileType"}
+        position={position}
+        key={position}
+        {...valueProp}
+        style={style}
+        status={boardItem.status} />
+    );
+};
 
 function revealEmptyTiles(board: Tile[], position: number, colsCount: number, rowsCount: number): void {
 

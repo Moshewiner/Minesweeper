@@ -13,17 +13,18 @@ export enum ClickType {
     Secondary
 }
 
-type TileProps = React.PropsWithChildren<{ status: TileStatus, onClick: (clickType: ClickType, tileStatus: TileStatus) => void }>
+type TileProps = React.PropsWithChildren<{ style: object, position: number, status: TileStatus, onClick: (clickType: ClickType, tileStatus: TileStatus) => void }>
 
 const Tile: React.FunctionComponent<TileProps> = (props: TileProps) => {
     return (
-        <div className='tile'
+        <div className={`tile ${props.position}`}
             onMouseDownCapture={
                 (event) => {
-                    props.onClick(event.shiftKey ? ClickType.Secondary: ClickType.Primary, props.status)
+                    props.onClick(event.shiftKey ? ClickType.Secondary : ClickType.Primary, props.status)
                     event.stopPropagation();
                 }
             }
+            style={props.style}
         >
             {
                 props.status === TileStatus.Flag && <img src={img} alt={props.status} />
