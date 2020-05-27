@@ -1,12 +1,9 @@
 import { oneDimentionalIndexToTwo, twoDimentionalIndexToOne } from "../array-utils/array-utils.service";
+import { DEFAULT_NUMBER_TILE, DEFAULT_MINE_TILE, TileType, Tile } from './board.types';
 
-export const MINE_TILE = -1;
-export const NUMBER_TILE = 0;
-
-
-export function createBoard(colsNum: number, rowsNum: number, minesCount: number): number[] {
-    let oneDimentionalBoard = new Array(rowsNum * colsNum).fill(NUMBER_TILE);
-    let referenceIndexBoard = new Array(rowsNum * colsNum).fill(6).map((_, i) => i);
+export function createBoard(colsCount: number, rowsCount: number, minesCount: number): Tile[] {
+    let oneDimentionalBoard = new Array(rowsCount * colsCount).fill(6).map(() => ({...DEFAULT_NUMBER_TILE}));
+    let referenceIndexBoard = new Array(rowsCount * colsCount).fill(6).map((_, i) => i);
 
     let mineIndices = [];
 
@@ -14,29 +11,27 @@ export function createBoard(colsNum: number, rowsNum: number, minesCount: number
         const index = Math.floor(Math.random() * referenceIndexBoard.length);
 
         mineIndices.push(referenceIndexBoard[index]);
-        oneDimentionalBoard[referenceIndexBoard[index]] = MINE_TILE;
+        oneDimentionalBoard[referenceIndexBoard[index]] = {...DEFAULT_MINE_TILE};
         referenceIndexBoard[index] = referenceIndexBoard[referenceIndexBoard.length - 1];
 
         referenceIndexBoard.pop();
     }
 
-    return calcNumbers(mineIndices, oneDimentionalBoard, colsNum, rowsNum);
+    return calcNumbers(mineIndices, oneDimentionalBoard, colsCount, rowsCount);
 }
 
-function calcNumbers(mineIndices: number[], board: number[], colsCount: number, rowsCount: number): number[] {
+function calcNumbers(mineIndices: number[], board: Tile[], colsCount: number, rowsCount: number): Tile[] {
     mineIndices.forEach(mine => {
         const neighbours = findNeighbours(mine, colsCount, rowsCount);
         neighbours.forEach(neighbour => {
-            if (board[neighbour] >= 0) {
-                board[neighbour]++;
+            if (board[neighbour].type === TileType.NumberTile) {
+                board[neighbour].value++;
             }
         });
     });
 
     return board;
 }
-
-
 
 function findNeighbours(index: number, colsCount: number, rowsCount: number) {
     const [i, j] = oneDimentionalIndexToTwo(index, colsCount);
