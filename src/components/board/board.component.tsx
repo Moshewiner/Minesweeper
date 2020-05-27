@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './board.component.scss';
 import TileContainer from '../tiles/tile.container';
 import { twoDimentionalIndexToOne } from '../../services/array-utils/array-utils.service';
-import { createBoard } from '../../services/board/board.service';
+import { createBoard, findNeighbours } from '../../services/board/board.service';
 import { TileStatus, ClickType } from '../tiles/tile.component';
 import { DEFAULT_MINE_TILE, Tile, TileType } from '../../services/board/board.types';
 
@@ -40,7 +40,7 @@ function createRows(board: Tile[], setBoard: (board: Tile[]) => void, colsCount:
                                 else if (clickType === ClickType.Secondary) {
                                     board[position].status = toggleFlag(board[position].status);
                                 }
-                                await setBoard([ ...board]);
+                                await setBoard([...board]);
                             }
                         }
                         type="Mine"
@@ -56,6 +56,11 @@ function createRows(board: Tile[], setBoard: (board: Tile[]) => void, colsCount:
                             if (clickType === ClickType.Primary) {
                                 const n = revealTile(board[position].status);;
                                 board[position].status = n;
+
+                                if (board[position].value === 0) {
+                                    revealEmptyTiles(board, position, colsCount, rowsCount);
+                                }
+
                             }
                             else if (clickType === ClickType.Secondary) {
                                 board[position].status = toggleFlag(board[position].status);
@@ -78,6 +83,17 @@ function createRows(board: Tile[], setBoard: (board: Tile[]) => void, colsCount:
     return rows;
 }
 
+function revealEmptyTiles(board: Tile[], position: number, colsCount: number, rowsCount: number): void {
+    const neighbours = findNeighbours(position, colsCount, rowsCount);
+    neighbours
+    .filter(neighbour => board[neighbour].status === TileStatus.Hidden)
+    .forEach(neighbour => {
+        board[neighbour].status = TileStatus.Revealed;
+        if (board[neighbour].value === 0) {
+            revealEmptyTiles(board, neighbour, colsCount, rowsCount);
+        }
+    });
+}
 
 function toggleFlag(currentState: TileStatus): TileStatus {
     const options = {
