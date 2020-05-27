@@ -8,7 +8,6 @@ import {
 } from '../../services/board/board.service';
 import { TileStatus, ClickType } from '../tiles/tile.component';
 import {
-	DEFAULT_MINE_TILE,
 	Tile,
 	TileType,
 } from '../../services/board/board.types';
@@ -19,9 +18,11 @@ function Board(props: {
 	colsCount: number;
 	rowsCount: number;
 	mineCount: number;
+	id: number;
 }) {
 	const {
 		isGameRunning,
+		setIsGameRunning,
 		remainingFlagsCount,
 		setFlagCount,
 		minesCount,
@@ -31,6 +32,9 @@ function Board(props: {
 
 	const onMineClick = useCallback(
 		(clickType: ClickType, tileStatus: TileStatus, position: number) => {
+			if (!isGameRunning) {
+				return;
+			}
 			if (board.length !== props.colsCount * props.rowsCount) {
 			} else if (
 				clickType === ClickType.Primary &&
@@ -43,6 +47,7 @@ function Board(props: {
 						}
 					});
 				setTimeout(() => alert('You have lost!'), 0);
+				setIsGameRunning(false);
 			} else if (clickType === ClickType.Secondary) {
 				board[position].status = toggleFlag(
 					tileStatus,
@@ -52,11 +57,14 @@ function Board(props: {
 			}
 			setBoard([...board]);
 		},
-		[board, remainingFlagsCount]
+		[board, remainingFlagsCount, isGameRunning]
 	);
 
 	const onNumberTileClick = useCallback(
 		(clickType: ClickType, tileStatus: TileStatus, position: number) => {
+			if (!isGameRunning) {
+				return;
+			}
 			if (board.length !== props.colsCount * props.rowsCount) {
 			} else if (clickType === ClickType.Primary) {
 				const n = revealTile(
@@ -78,7 +86,7 @@ function Board(props: {
 			}
 			setBoard([...board]);
 		},
-		[board, props.colsCount, props.rowsCount, revealedTilesCount]
+		[board, props.colsCount, props.rowsCount, revealedTilesCount, isGameRunning]
 	);
 
 	useEffect(() => {
@@ -91,7 +99,8 @@ function Board(props: {
 			props.rowsCount,
 			revealedTilesCount,
 			minesCount,
-			remainingFlagsCount
+			remainingFlagsCount,
+			setIsGameRunning
 		);
 	}, [
 		props.colsCount,
@@ -99,6 +108,7 @@ function Board(props: {
 		revealedTilesCount,
 		minesCount,
 		remainingFlagsCount,
+		setIsGameRunning
 	]);
 
 	return board.length > 0 ? (
@@ -165,7 +175,8 @@ function checkWin(
 	rowsCount: number,
 	revealedTilesCount: number,
 	minesCount: number,
-	remainingFlagsCount: number
+	remainingFlagsCount: number,
+	setIsGameRunning: (isRunning: boolean) => void
 ) {
 	console.log({
 		colsCount,
@@ -179,6 +190,7 @@ function checkWin(
 		remainingFlagsCount === 0
 	) {
 		alert('You win!');
+		setIsGameRunning(false);
 	}
 }
 

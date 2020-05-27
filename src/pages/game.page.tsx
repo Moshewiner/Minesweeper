@@ -7,11 +7,13 @@ export const GameContext = React.createContext<{
   remainingFlagsCount: number;
   setFlagCount: (count: number) => void;
   isGameRunning: boolean;
+  setIsGameRunning: (isRunning: boolean) => void;
 }>({
   remainingFlagsCount: 0,
-  setFlagCount: () => {},
+  setFlagCount: () => { },
   isGameRunning: false,
   minesCount: 0,
+  setIsGameRunning: () => { }
 });
 
 function Game() {
@@ -25,10 +27,11 @@ function Game() {
   });
   const [isGameRunning, setIsGameRunning] = useState(true);
   const [remainingFlagsCount, setFlagCount] = useState(minesCount);
+  const [boardId, setBoardId] = useState(0);
 
   return (
     <GameContext.Provider
-      value={{ remainingFlagsCount, isGameRunning, setFlagCount, minesCount }}
+      value={{ remainingFlagsCount, isGameRunning, setFlagCount, minesCount, setIsGameRunning }}
     >
       <input
         value={colsCount}
@@ -52,7 +55,13 @@ function Game() {
         }}
       />
       <button
-        onClick={() => setBoardProps({ colsCount, rowsCount, minesCount })}
+        onClick={
+          () => {
+            setBoardProps({ colsCount, rowsCount, minesCount });
+            setIsGameRunning(true);
+            setBoardId(boardId+1);
+          }
+        }
       >
         New Game
       </button>
@@ -63,6 +72,7 @@ function Game() {
         colsCount={boardProps.colsCount}
         rowsCount={boardProps.rowsCount}
         mineCount={boardProps.minesCount}
+        id={boardId}
       />
     </GameContext.Provider>
   );
