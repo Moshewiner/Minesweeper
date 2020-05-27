@@ -111,6 +111,12 @@ function Board(props: {
 		setIsGameRunning
 	]);
 
+
+	useEffect(()=> {
+		setNumberOfRevealedTiles(0);
+		setFlagCount(minesCount);
+	}, [props.id]);
+
 	return board.length > 0 ? (
 		<Grid
 			columnCount={props.colsCount}
@@ -178,13 +184,6 @@ function checkWin(
 	remainingFlagsCount: number,
 	setIsGameRunning: (isRunning: boolean) => void
 ) {
-	console.log({
-		colsCount,
-		rowsCount,
-		minesCount,
-		revealedTilesCount,
-		remainingFlagsCount,
-	});
 	if (
 		colsCount * rowsCount - minesCount === revealedTilesCount &&
 		remainingFlagsCount === 0
