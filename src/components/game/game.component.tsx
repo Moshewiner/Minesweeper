@@ -3,10 +3,10 @@ import { createBoard, revealEmptyTiles } from "../../services/board/board.servic
 import { GameBoard } from "../../services/board/board.types";
 import Board from "../board/board.component";
 import React from "react";
-import { GameContext } from "../../pages/game.page";
 import { Tile, ClickType, TileStatus, TileType } from "../../services/board/tile.types";
 import { toggleFlag, revealTile } from "../../services/board/tile.service";
-import { checkWin } from "../../services/game-handler/game-handler.service";
+import { checkWin } from "../../services/game/game-handler.service";
+import { GameContext } from "../../services/game/game.context";
 
 function Game(props: { colsCount: number; rowsCount: number; minesCount: number }) {
   let [gameBoard, setBoard] = useState<GameBoard>([]);
