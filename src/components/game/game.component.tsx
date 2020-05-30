@@ -8,16 +8,22 @@ import { Tile, ClickType, TileStatus, TileType } from "../../services/board/tile
 import { toggleFlag, revealTile } from "../../services/board/tile.service";
 import { checkWin } from "../../services/game-handler/game-handler.service";
 
-function Game(props: { colsCount: number; rowsCount: number; minesCount: number; }) {
+function Game(props: { colsCount: number; rowsCount: number; minesCount: number }) {
   let [gameBoard, setBoard] = useState<GameBoard>([]);
-  const [boardId, setBoardId] = useState(0);
-
 
   useEffect(() => {
     setBoard(createBoard(props.colsCount, props.rowsCount, props.minesCount));
-  }, [props.colsCount, props.rowsCount, props.minesCount, boardId]);
-  const { isGameRunning, setIsGameRunning, remainingFlagsCount, setFlagCount, minesCount } = useContext(GameContext);
-  let [revealedTilesCount, setNumberOfRevealedTiles] = useState(0);
+  }, [props.colsCount, props.rowsCount, props.minesCount]);
+
+  const {
+    isGameRunning,
+    setIsGameRunning,
+    remainingFlagsCount,
+    setFlagCount,
+    minesCount,
+    revealedTilesCount,
+    setNumberOfRevealedTiles
+  } = useContext(GameContext);
 
   const onMineClick = useCallback(
     (clickType: ClickType, tileStatus: TileStatus, position: number) => {
@@ -37,7 +43,7 @@ function Game(props: { colsCount: number; rowsCount: number; minesCount: number;
       }
       setBoard([...gameBoard]);
     },
-    [gameBoard, remainingFlagsCount, isGameRunning]
+    [gameBoard, remainingFlagsCount, isGameRunning, setFlagCount, setIsGameRunning]
   );
 
   const onNumberTileClick = useCallback(
@@ -70,10 +76,6 @@ function Game(props: { colsCount: number; rowsCount: number; minesCount: number;
     checkWin(props.colsCount, props.rowsCount, revealedTilesCount, minesCount, remainingFlagsCount, setIsGameRunning);
   }, [props.colsCount, props.rowsCount, revealedTilesCount, minesCount, remainingFlagsCount, setIsGameRunning]);
 
-  useEffect(() => {
-    setNumberOfRevealedTiles(0);
-    setFlagCount(minesCount);
-  }, [boardId]);
 
   return (
     <Board
@@ -91,7 +93,6 @@ function Game(props: { colsCount: number; rowsCount: number; minesCount: number;
       colsCount={props.colsCount}
       rowsCount={props.rowsCount}
       mineCount={props.minesCount}
-      key={boardId}
     />
   );
 }

@@ -1,11 +1,16 @@
 import React from 'react';
 import './number-tile.component.scss';
+import Tile, { TileProps } from '../abstract-tile/tile.component';
 
-function NumberTile({ value }: { value: number }) {
+function NumberTile(props: TileProps & { value: number }) {
   return (
-    <div className={`tile number ${value}`} style={{ color: `hsl(${value * 70}, 100%, 50%)` }}>
-      {value}
-    </div>
+    <Tile {...props}>
+      <div className={`tile number ${props.value}`} style={{ color: `hsl(${props.value * 70}, 100%, 50%)` }}>
+        {props.value}
+      </div>
+    </Tile>
+
+
   );
 }
 

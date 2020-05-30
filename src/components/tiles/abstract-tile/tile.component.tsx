@@ -1,9 +1,9 @@
 import React from 'react';
-import img from './../../assets/icons8-flag-filled-100.png';
+import img from './../../../assets/icons8-flag-filled-100.png';
 import './tile.component.scss';
-import { TileStatus, ClickType } from '../../services/board/tile.types';
+import { TileStatus, ClickType } from '../../../services/board/tile.types';
 
-type TileProps = React.PropsWithChildren<{
+export type TileProps = React.PropsWithChildren<{
   style: object;
   status: TileStatus;
   onClick: (clickType: ClickType, tileStatus: TileStatus) => void;

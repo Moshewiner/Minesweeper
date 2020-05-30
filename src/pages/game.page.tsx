@@ -1,4 +1,3 @@
-import Board from '../components/board/board.component';
 import React, { useState } from 'react';
 import './game.page.scss';
 import Game from '../components/game/game.component';
@@ -9,12 +8,16 @@ export const GameContext = React.createContext<{
   setFlagCount: (count: number) => void;
   isGameRunning: boolean;
   setIsGameRunning: (isRunning: boolean) => void;
+  revealedTilesCount: number;
+  setNumberOfRevealedTiles: (count: number) => void;
 }>({
   remainingFlagsCount: 0,
-  setFlagCount: () => {},
+  setFlagCount: () => { },
   isGameRunning: false,
   minesCount: 0,
-  setIsGameRunning: () => {},
+  setIsGameRunning: () => { },
+  revealedTilesCount: 0,
+  setNumberOfRevealedTiles: () => { }
 });
 
 function GamePage() {
@@ -28,7 +31,9 @@ function GamePage() {
   });
   const [isGameRunning, setIsGameRunning] = useState(true);
   const [remainingFlagsCount, setFlagCount] = useState(minesCount);
+  let [revealedTilesCount, setNumberOfRevealedTiles] = useState(0);
   const [gameId, setGameId] = useState(0);
+
 
   return (
     <div className="game">
@@ -40,6 +45,8 @@ function GamePage() {
           setFlagCount,
           minesCount,
           setIsGameRunning,
+          revealedTilesCount,
+          setNumberOfRevealedTiles
         }}
       >
         <div className="controls">
@@ -68,7 +75,9 @@ function GamePage() {
             onClick={() => {
               setBoardProps({ colsCount, rowsCount, minesCount });
               setIsGameRunning(true);
-              setGameId(gameId + 1);
+              setNumberOfRevealedTiles(0);
+              setFlagCount(minesCount);
+              setGameId(gameId+1);
             }}
           >
             New Game

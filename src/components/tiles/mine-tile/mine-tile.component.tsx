@@ -1,11 +1,14 @@
 import React from 'react';
 import img from './../../../assets/icons8-naval-mine-100.png';
+import Tile, { TileProps } from '../abstract-tile/tile.component';
 
-function MineTile() {
+function MineTile(props: TileProps) {
   return (
-    <div className="tile mine">
-      <img src={img} alt="Mine" />
-    </div>
+    <Tile {...props}>
+      <div className="mine">
+        <img src={img} alt="Mine" />
+      </div>
+    </Tile>
   );
 }
 
