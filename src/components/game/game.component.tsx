@@ -69,7 +69,7 @@ function Game(props: { colsCount: number; rowsCount: number; minesCount: number 
       }
       setBoard([...gameBoard]);
     },
-    [gameBoard, props.colsCount, props.rowsCount, revealedTilesCount, isGameRunning]
+    [gameBoard, props.colsCount, props.rowsCount, revealedTilesCount, isGameRunning, remainingFlagsCount, setFlagCount, setNumberOfRevealedTiles]
   );
 
   useEffect(() => {
