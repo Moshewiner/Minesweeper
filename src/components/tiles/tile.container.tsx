@@ -1,7 +1,8 @@
 import React from 'react';
 import MineTile from './mine-tile/mine-tile.component';
 import NumberTile from './number-tile/number-tile.component';
-import Tile, { TileStatus, ClickType } from './tile.component';
+import { ClickType, TileStatus } from '../../services/board/tile.types';
+import Tile from './tile.component';
 
 type MineTileType = {
   type: 'Mine';
@@ -23,7 +24,6 @@ function TileContainer(props: TileContainerPropsType) {
   return (
     <Tile
       style={props.style}
-      position={props.position}
       status={props.status}
       onClick={(clickType, tileStatus) => props.onClick(clickType, tileStatus, props.position)}
     >

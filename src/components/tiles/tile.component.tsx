@@ -1,21 +1,10 @@
 import React from 'react';
 import img from './../../assets/icons8-flag-filled-100.png';
 import './tile.component.scss';
-
-export enum TileStatus {
-  Hidden = 'Hidden',
-  Revealed = 'Revealed',
-  Flag = 'Flag',
-}
-
-export enum ClickType {
-  Primary,
-  Secondary,
-}
+import { TileStatus, ClickType } from '../../services/board/tile.types';
 
 type TileProps = React.PropsWithChildren<{
   style: object;
-  position: number;
   status: TileStatus;
   onClick: (clickType: ClickType, tileStatus: TileStatus) => void;
 }>;
@@ -23,7 +12,7 @@ type TileProps = React.PropsWithChildren<{
 const Tile: React.FunctionComponent<TileProps> = (props: TileProps) => {
   return (
     <div
-      className={`tile ${props.position}`}
+      className={`tile`}
       onMouseDownCapture={(event) => {
         props.onClick(event.shiftKey ? ClickType.Secondary : ClickType.Primary, props.status);
         event.stopPropagation();

@@ -1,6 +1,7 @@
 import Board from '../components/board/board.component';
 import React, { useState } from 'react';
 import './game.page.scss';
+import Game from '../components/game/game.component';
 
 export const GameContext = React.createContext<{
   minesCount: number;
@@ -16,7 +17,7 @@ export const GameContext = React.createContext<{
   setIsGameRunning: () => {},
 });
 
-function Game() {
+function GamePage() {
   const [colsCount, setColsCount] = useState(9);
   const [rowsCount, setRowsCount] = useState(9);
   const [minesCount, setMinesCount] = useState(3);
@@ -27,7 +28,7 @@ function Game() {
   });
   const [isGameRunning, setIsGameRunning] = useState(true);
   const [remainingFlagsCount, setFlagCount] = useState(minesCount);
-  const [boardId, setBoardId] = useState(0);
+  const [gameId, setGameId] = useState(0);
 
   return (
     <div className="game">
@@ -67,7 +68,7 @@ function Game() {
             onClick={() => {
               setBoardProps({ colsCount, rowsCount, minesCount });
               setIsGameRunning(true);
-              setBoardId(boardId + 1);
+              setGameId(gameId + 1);
             }}
           >
             New Game
@@ -76,15 +77,15 @@ function Game() {
         <div className="info">
           <span>Remaining Flags: {remainingFlagsCount}</span>
         </div>
-        <Board
+        <Game
           colsCount={boardProps.colsCount}
           rowsCount={boardProps.rowsCount}
-          mineCount={boardProps.minesCount}
-          id={boardId}
+          minesCount={boardProps.minesCount}
+          key={gameId}
         />
       </GameContext.Provider>
     </div>
   );
 }
 
-export default Game;
+export default GamePage;

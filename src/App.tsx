@@ -1,9 +1,9 @@
 import React from 'react';
 import './App.css';
-import Game from './pages/game.page';
+import GamePage from './pages/game.page';
 
 function App() {
-  return <Game />;
+  return <GamePage />;
 }
 
 export default App;

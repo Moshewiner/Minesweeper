@@ -1,6 +1,6 @@
 import { oneDimentionalIndexToTwo, twoDimentionalIndexToOne } from '../array-utils/array-utils.service';
-import { DEFAULT_NUMBER_TILE, DEFAULT_MINE_TILE, TileType, Tile } from './board.types';
-import { TileStatus } from '../../components/tiles/tile.component';
+import { Tile, TileType, TileStatus } from './tile.types';
+import { DEFAULT_NUMBER_TILE, DEFAULT_MINE_TILE } from './board.types';
 
 export function createBoard(colsCount: number, rowsCount: number, minesCount: number): Tile[] {
   let oneDimentionalBoard = new Array(rowsCount * colsCount).fill(6).map(() => ({ ...DEFAULT_NUMBER_TILE }));
@@ -77,39 +77,3 @@ export function revealEmptyTiles(
   countOfRevealed > 1 && setRevealedTilesCount(revealedTilesCount + countOfRevealed);
 }
 
-export function toggleFlag(
-  currentStatus: TileStatus,
-  flagCount: number,
-  setFlagCount: (count: number) => void
-): TileStatus {
-  if (currentStatus === TileStatus.Flag) {
-    setFlagCount(flagCount + 1);
-    return TileStatus.Hidden;
-  }
-  if (currentStatus === TileStatus.Hidden) {
-    if (flagCount > 0) {
-      setFlagCount(flagCount - 1);
-      return TileStatus.Flag;
-    } else {
-      alert("You don't have any more flags to use");
-    }
-  }
-
-  return currentStatus;
-}
-
-export function revealTile(
-  currentState: TileStatus,
-  numberOfRevealedTiles: number,
-  setNumberOfRevealedTiles: (count: number) => void
-): TileStatus {
-  const options = {
-    [TileStatus.Hidden]: TileStatus.Revealed,
-  } as { [key in TileStatus]: TileStatus };
-
-  if (options[currentState] && options[currentState] !== currentState) {
-    setNumberOfRevealedTiles(numberOfRevealedTiles + 1);
-    return options[currentState];
-  }
-  return currentState;
-}

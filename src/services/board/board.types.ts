@@ -1,15 +1,6 @@
-import { TileStatus } from '../../components/tiles/tile.component';
+import { Tile, TileType, TileStatus } from './tile.types';
 
-export enum TileType {
-  Mine = 'Mine',
-  NumberTile = 'NumberTile',
-}
 
-export type Tile = {
-  type: TileType;
-  status: TileStatus;
-  value: number;
-};
 
 export const DEFAULT_MINE_TILE: Tile = {
   type: TileType.Mine,
@@ -21,3 +12,5 @@ export const DEFAULT_NUMBER_TILE: Tile = {
   status: TileStatus.Hidden,
   value: 0,
 };
+
+export type GameBoard = Tile[];
